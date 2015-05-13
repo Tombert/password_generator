@@ -3,14 +3,17 @@ import System.Entropy
 import qualified Data.ByteString as B
 import System.Environment
 import Codec.Binary.Base85 as B85
+import Codec.Binary.Base64 as B64
 
-toBase85 :: B.ByteString -> String
-toBase85 = B85.encode . B.unpack
+getEncoder "B64" = B64.encode
+getEncoder "B85" = B85.encode
+getEncoder _ = error "No Encoder found"
 
 main :: IO ()
 main = do
-        args <- getArgs
-        let length = read $ args !! 0 :: Int
+        enc:len:xs <- getArgs
+        let length = read $ len :: Int
         entropy <- getEntropy length
-        let blah = toBase85 entropy
-        print blah
+        let pass = ((getEncoder enc) . B.unpack) entropy
+        print pass
+
