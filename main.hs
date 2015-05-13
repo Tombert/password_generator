@@ -15,5 +15,5 @@ main = do
         let length = read $ len :: Int
         entropy <- getEntropy length
         let pass = ((getEncoder enc) . B.unpack) entropy
-        print pass
+        putStrLn pass
 
