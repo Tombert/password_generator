@@ -11,7 +11,7 @@ getEncoder _ = error "No Encoder found"
 
 main :: IO ()
 main = do
-        enc:len:xs <- getArgs
+        enc:len:_ <- getArgs
         let length = read $ len :: Int
         entropy <- getEntropy length
         let pass = ((getEncoder enc) . B.unpack) entropy
