@@ -5,5 +5,6 @@ import Data.ByteString.Base64 as B64
 
 main :: IO ()
 main = do
-        entropy <- getEntropy 22
+        args <- getArgs
+        entropy <- getEntropy (read (args !! 0) :: Int)
         print ( B64.encode entropy)
