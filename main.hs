@@ -1,28 +1,23 @@
 module Main where
-import System.Entropy
-import qualified Data.ByteString as B
 import System.Environment
-import Numeric (showIntAtBase)
-import Data.Char (intToDigit, chr)
-import Data.List.Split
+import Data.Maybe
+import qualified Data.ByteString.Lazy as BS
 
-bytesToBits :: B.ByteString -> String
-bytesToBits = (foldl (++) "") . (map (\x -> showIntAtBase 2 intToDigit x "") ) . (map (\x -> x :: Int)) . (map fromIntegral) . B.unpack
+alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$%^&*()_+[]\\{}|;':\",./<>?`~"
 
-bin2dec :: String -> Int
-bin2dec = foldr (\c s -> s * 2 + c) 0 . reverse . map c2i
-    where c2i c = if c == '0' then 0 else 1
+stripElems = filter . flip notElem 
 
-intListToString = map chr
+toIntegers = (map fromIntegral) . BS.unpack 
 
-entropyToHash = (map bin2dec) . (splitEvery 7) . bytesToBits
+cleanupArgs (x:y:[]) = (x,y)
+cleanupArgs (x:[]) = (x, "")
 
 main :: IO ()
-main = do
-        base:len:_ <- getArgs
-        let realBase = read $ base :: Int
-        let length = read len :: Int
-        entropy <- getEntropy 300
-        let filters = filter (<127) . filter (> (127 - realBase))
-        let hash = take length ((intListToString . filters . entropyToHash) entropy)
-        putStrLn hash
+main = do 
+        args <- getArgs
+        let (len, excludes) = cleanupArgs args
+        let alph  = stripElems excludes alphabet
+        let l = read len :: Int
+        entropy <- BS.readFile "/dev/random"
+        let chars = take l ( (map ((!!) alph)) . (filter (<(length alph))) .toIntegers $ entropy)
+        print chars
