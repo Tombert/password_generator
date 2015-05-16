@@ -20,4 +20,4 @@ main = do
         let l = read len :: Int
         entropy <- BS.readFile "/dev/random"
         let chars = take l ( (map ((!!) alph)) . (filter (<(length alph))) .toIntegers $ entropy)
-        print chars
+        putStrLn chars
