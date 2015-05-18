@@ -14,6 +14,3 @@ cabal run 10 abc
 HK'MzC*7V$
 ```
 The first argument is the lenght of the requested password, while the second is simply the characters you don't want to show up (some websites don't allow certain characters)
-
-###TODO: 
-Exclusionary characters. 
